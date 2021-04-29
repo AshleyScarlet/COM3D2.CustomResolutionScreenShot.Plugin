@@ -22,7 +22,7 @@ ___
 内部解像度を変更するのでキャプチャ倍率を使用するよりキレイな高解像度SSが撮れたりします
 | CRSS(3840x2160) | キャプチャ倍率(1920x1080 X2) |
 |:---:|:---:|
-|<img src="https://user-images.githubusercontent.com/70315656/116593066-a927ad80-a95b-11eb-8d98-73834d959133.png">|<img src="https://user-images.githubusercontent.com/70315656/116593066-a927ad80-a95b-11eb-8d98-73834d959133.png">|  
+|<img src="https://user-images.githubusercontent.com/70315656/116593066-a927ad80-a95b-11eb-8d98-73834d959133.png">|<img src="https://user-images.githubusercontent.com/70315656/116593087-af1d8e80-a95b-11eb-942c-10e3747ed28b.png">|  
 
 ~~わからん~~
 ___
