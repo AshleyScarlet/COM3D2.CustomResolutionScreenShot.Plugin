@@ -3,7 +3,9 @@
 ~~解像度は、力だ~~
   
 ## ダウンロード
-[こちら](https://github.com/AshleyScarlet/COM3D2.CustomResolutionScreenShot.Plugin/releases/download/v1.1.0/COM3D2.CustomResolutionScreenShot.Plugin.zip)からどうぞ
+[こちら](https://github.com/AshleyScarlet/COM3D2.CustomResolutionScreenShot.Plugin/releases/download/v1.1.0/COM3D2.CustomResolutionScreenShot.Plugin.zip)からどうぞ  
+COM3D2 ver1.55で使うことを想定していますが多分どのバージョンでも動きそうな気がします
+
 
 ### `COM3D2.Hi-ResSS.Plugin` をお持ちの方へ
 このプラグインはHi-ResSSのリメイク版です  
@@ -18,7 +20,7 @@ ___
 ### ![](https://user-images.githubusercontent.com/70315656/116590856-30bfed00-a959-11eb-8eeb-5b1eb3ee78fd.png)
 設定ファイルで指定した解像度で撮影します  
 内部解像度を変更するのでキャプチャ倍率を使用するよりキレイな高解像度SSが撮れたりします
-| CRSS(3840x2160) | キャプチャ倍率(X2) |
+| CRSS(3840x2160) | キャプチャ倍率(1920x1080 X2) |
 |:---:|:---:|
 |<img src="https://user-images.githubusercontent.com/70315656/116593066-a927ad80-a95b-11eb-8d98-73834d959133.png">|<img src="https://user-images.githubusercontent.com/70315656/116593066-a927ad80-a95b-11eb-8d98-73834d959133.png">|  
 
@@ -72,14 +74,21 @@ ___
 	</Presets>
 </Config>
 ```
+8Kのような大きい解像度で撮影する際は結構なマシンスペックを要求されます
 
 ## 問題点
 ### SceneCaptureのエフェクトと相性が悪い
 主に背景ぼかしやブルーム系のエフェクト  
 解像度を上げたりすると画面とSSとでかなり違いが出てしまいます
-| CRSS(3840x2160) | ふつうに撮ったやつ |
+
+| CRSS(3840x2160) | ふつうに撮ったやつ(画面そのまま) |
 |:---:|:---:|
-|<img src="https://user-images.githubusercontent.com/70315656/116599090-96fd3d80-a962-11eb-8bdf-76ec675f1893.png">|<img src="https://user-images.githubusercontent.com/70315656/116599114-9cf31e80-a962-11eb-9112-f5d4695dd68d.png">|  
+|<img src="https://user-images.githubusercontent.com/70315656/116599090-96fd3d80-a962-11eb-8bdf-76ec675f1893.png">|<img src="https://user-images.githubusercontent.com/70315656/116599114-9cf31e80-a962-11eb-9112-f5d4695dd68d.png">|
+| Bokehのみ、両方おなじ設定 |
+
 
  ~~SceneCaptureを改造すれば何とかできます~~  
 `OnRenderImage(... , ...)` 内でRenderTextureのサイズを取得しているところをScreenのサイズを取得するようにすればいい感じになるはずです（憶測） 
+
+### 大きい解像度を指定すると撮影時に数秒固まってしまう
+<sub>非同期にするべきなんですかね...?</sub>
