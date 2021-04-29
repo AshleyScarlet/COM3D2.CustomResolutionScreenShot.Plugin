@@ -1,0 +1,49 @@
+﻿<Project Sdk="Microsoft.NET.Sdk" DefaultTargets="BuildCOM3D2Plugin" InitialTargets="BuildCOM3D2Plugin">
+
+	<PropertyGroup>
+		<OutputType>Library</OutputType>
+		<TargetFramework>net45</TargetFramework>
+		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+		<COM3D2Path>$(registry:HKEY_CURRENT_USER\SOFTWARE\KISS\カスタムオーダーメイド3D2@InstallPath)</COM3D2Path>
+		<MCSPath>"C:\Program Files\Mono\bin\mcs"</MCSPath>
+		<IsSybarisPlugin>False</IsSybarisPlugin>
+		<PluginOutputPath>.\Output\</PluginOutputPath>
+	</PropertyGroup>
+
+	<ItemGroup>
+	  <Compile Remove="$(PluginOutputPath)**" />
+	  <EmbeddedResource Remove="$(PluginOutputPath)**" />
+	  <None Remove="$(PluginOutputPath)**" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Reference Include="Assembly-CSharp">
+			<HintPath>$(COM3D2Path)COM3D2x64_Data\Managed\Assembly-CSharp.dll</HintPath>
+			<Private>false</Private>
+		</Reference>
+		<Reference Include="UnityEngine">
+			<HintPath>$(COM3D2Path)COM3D2x64_Data\Managed\UnityEngine.dll</HintPath>
+			<Private>false</Private>
+		</Reference>
+		<Reference Include="UnityInjector" Condition="!$(IsSybarisPlugin)">
+			<HintPath>$(COM3D2Path)Sybaris\UnityInjector.dll</HintPath>
+			<Private>false</Private>
+		</Reference>
+		<Reference Include="Mono.Cecil" Condition="$(IsSybarisPlugin)">
+			<HintPath>$(COM3D2Path)Sybaris\Mono.Cecil.dll</HintPath>
+			<Private>false</Private>
+		</Reference>
+	</ItemGroup>
+
+	<Target Name="BuildCOM3D2Plugin" Inputs="@(Compile)" Outputs="$(PluginOutputPath)$(AssemblyName).dll">
+		<PropertyGroup>
+			<Library>-lib:$(COM3D2Path)COM3D2x64_Data\Managed -r:mscorlib.dll -r:UnityEngine.dll -r:System.Xml.dll -r:System.Xml.Linq.dll -r:Assembly-CSharp.dll -r:Assembly-CSharp-firstpass.dll -r:Assembly-UnityScript-firstpass.dll</Library>
+			<AdditionalLibrary Condition="!$(IsSybarisPlugin)">-r:$(COM3D2Path)Sybaris\UnityInjector.dll</AdditionalLibrary>
+			<AdditionalLibrary Condition="$(IsSybarisPlugin)">-r:$(COM3D2Path)Sybaris\Mono.Cecil.dll</AdditionalLibrary>
+		</PropertyGroup>
+		<Message Text="Compiling COM3D2 Plugin. $(OutputPath)" Importance="high" Condition="true" />
+		<MakeDir Directories="$(PluginOutputPath)" />
+		<Exec Command="$(MCSPath) -langversion:Experimental -t:library -out:$(PluginOutputPath)$(AssemblyName).dll $(Library) $(AdditionalLibrary) -optimize @(Compile, ' ')" />
+	</Target>
+
+</Project>
