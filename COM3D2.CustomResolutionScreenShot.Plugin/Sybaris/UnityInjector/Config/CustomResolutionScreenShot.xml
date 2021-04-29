@@ -1,0 +1,37 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<Config>
+	<!-- 解像度プリセット Targetに使用するプリセットの名前を入力してください -->
+	<Presets Target="4K">
+		
+		<!-- フルHDのプリセット フルスクリーン状態で撮影するのと変わらないです -->
+		<Preset Name="FullHD">
+			<Width>1920</Width>
+			<Height>1080</Height>
+		</Preset>
+
+		<!-- 4Kのプリセット 良い感じ -->
+		<Preset Name="4K">
+			<Width>3840</Width>
+			<Height>2160</Height>
+		</Preset>
+
+		<!-- UWQHDのプリセット プレビュー機能がないので撮影するのはなかなか難しいかも...? -->
+		<Preset Name="UWQHD">
+			<Width>3440</Width>
+			<Height>1440</Height>
+		</Preset>
+
+		<!-- 8Kのプリセット 結構重たいので注意 -->
+		<Preset Name="8K">
+			<Width>7680</Width>
+			<Height>4320</Height>
+		</Preset>
+
+		<!-- 16Kのプリセットですが確実に描画が崩れてしまう... -->
+		<Preset Name="16K">
+			<Width>15360</Width>
+			<Height>8640</Height>
+		</Preset>
+		
+	</Presets>
+</Config>

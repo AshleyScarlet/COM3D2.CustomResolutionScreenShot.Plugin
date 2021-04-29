@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk" DefaultTargets="BuildCOM3D2Plugin" InitialTargets="BuildCOM3D2Plugin">
+﻿<Project Sdk="Microsoft.NET.Sdk" >
 
 	<PropertyGroup>
 		<OutputType>Library</OutputType>
@@ -8,12 +8,16 @@
 		<MCSPath>"C:\Program Files\Mono\bin\mcs"</MCSPath>
 		<IsSybarisPlugin>False</IsSybarisPlugin>
 		<PluginOutputPath>.\Output\</PluginOutputPath>
+		<GenerateTargetFrameworkAttribute>false</GenerateTargetFrameworkAttribute>
 	</PropertyGroup>
 
 	<ItemGroup>
 	  <Compile Remove="$(PluginOutputPath)**" />
 	  <EmbeddedResource Remove="$(PluginOutputPath)**" />
 	  <None Remove="$(PluginOutputPath)**" />
+	  <None Update="Sybaris\UnityInjector\Config\CustomResolutionScreenShot.xml">
+	    <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+	  </None>
 	</ItemGroup>
 
 	<ItemGroup>
@@ -34,16 +38,17 @@
 			<Private>false</Private>
 		</Reference>
 	</ItemGroup>
-
-	<Target Name="BuildCOM3D2Plugin" Inputs="@(Compile)" Outputs="$(PluginOutputPath)$(AssemblyName).dll">
+	
+	<Target Name="BuildCOM3D2Plugin" AfterTargets="Build" >
 		<PropertyGroup>
 			<Library>-lib:$(COM3D2Path)COM3D2x64_Data\Managed -r:mscorlib.dll -r:UnityEngine.dll -r:System.Xml.dll -r:System.Xml.Linq.dll -r:Assembly-CSharp.dll -r:Assembly-CSharp-firstpass.dll -r:Assembly-UnityScript-firstpass.dll</Library>
 			<AdditionalLibrary Condition="!$(IsSybarisPlugin)">-r:$(COM3D2Path)Sybaris\UnityInjector.dll</AdditionalLibrary>
 			<AdditionalLibrary Condition="$(IsSybarisPlugin)">-r:$(COM3D2Path)Sybaris\Mono.Cecil.dll</AdditionalLibrary>
 		</PropertyGroup>
-		<Message Text="Compiling COM3D2 Plugin. $(OutputPath)" Importance="high" Condition="true" />
-		<MakeDir Directories="$(PluginOutputPath)" />
-		<Exec Command="$(MCSPath) -langversion:Experimental -t:library -out:$(PluginOutputPath)$(AssemblyName).dll $(Library) $(AdditionalLibrary) -optimize @(Compile, ' ')" />
+		<Message Text="Compiling COM3D2 Plugin." Importance="high" Condition="true" />
+		<MakeDir Directories="$(OutDir)" />
+		<Delete Files="$(OutputPath)$(AssemblyName).dll"/>
+		<Exec Command="$(MCSPath) -langversion:Experimental -t:library -out:$(OutputPath)$(AssemblyName).dll $(Library) $(AdditionalLibrary) -optimize @(Compile, ' ')" />
 	</Target>
 
 </Project>

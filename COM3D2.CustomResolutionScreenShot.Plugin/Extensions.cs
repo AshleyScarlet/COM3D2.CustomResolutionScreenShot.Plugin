@@ -12,8 +12,6 @@ namespace COM3D2.CustomResolutionScreenShot.Plugin
             string path = Util.GetTimeFileName();
 
             InternalScreenshot(camera, path);
-
-            
         }
 
         public static void TransparentScreenshot(this object _, GameObject obj)
@@ -44,7 +42,7 @@ namespace COM3D2.CustomResolutionScreenShot.Plugin
         private static void InternalScreenshot(Camera camera, string path)
         {
             var preset = Configuration.Preset;
-            var renderTexture = RenderTexture.GetTemporary(preset.Width, preset.Height);
+            var renderTexture = RenderTexture.GetTemporary(preset.Width, preset.Height, preset.DepthBuffer);
             var texture = _TextureCache;
             if (ReferenceEquals(texture, null))
             {
