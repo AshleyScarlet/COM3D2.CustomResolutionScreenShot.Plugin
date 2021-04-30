@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using System.Xml.Linq;
@@ -21,24 +22,41 @@ namespace COM3D2.CustomResolutionScreenShot.Plugin
                 var presetElement = configElement.Element("Presets");
                 var selectedPresetName = presetElement.Attribute("Target").Value;
                 var presets = presetElement.Elements();
+                var dict = new Dictionary<string,ResolutionPreset>();
+                var defaultPreset = CurrentPreset;
+                dict.Add(defaultPreset.Name, defaultPreset);
                 foreach (var x in presets)
                 {
-                    if (x.Name.LocalName == "Preset" && x.Attribute("Name")?.Value == selectedPresetName)
+                    if (x.Name.LocalName == "Preset")
                     {
+                        var name = x.Attribute("Name").Value;
                         if (int.TryParse(x.Element("Width")?.Value, out var width) && int.TryParse(x.Element("Height")?.Value, out var height))
                         {
+                            ResolutionPreset preset;
                             if (int.TryParse(x.Element("DepthBuffer")?.Value, out var depthBuffer))
-                                Preset = new ResolutionPreset(width, height, depthBuffer);
+                                preset = new ResolutionPreset(width, height, depthBuffer, name);
                             else
-                                Preset = new ResolutionPreset(width, height);
+                                preset = new ResolutionPreset(width, height, name);
+
+                            if (!dict.ContainsKey(name))
+                                dict.Add(name, preset);
                         }
-                        return;
                     }
                 }
-                var tmp = Console.ForegroundColor;
-                Console.ForegroundColor = ConsoleColor.Yellow;
-                Console.WriteLine("[CRSS] : プリセット\"{0}\"が見つかりませんでした。デフォルト設定(3840x2160)を使用します。", selectedPresetName);
-                Console.ForegroundColor = tmp;
+                if (dict.TryGetValue(selectedPresetName, out var selectedPreset))
+                {
+                    CurrentPreset = selectedPreset;
+                }
+                else
+                {
+                    var tmp = Console.ForegroundColor;
+                    Console.ForegroundColor = ConsoleColor.Yellow;
+                    Console.WriteLine("[CRSS] : プリセット\"{0}\"が見つかりませんでした。デフォルト設定(3840x2160)を使用します。", selectedPresetName);
+                    Console.ForegroundColor = tmp;
+                    CurrentPreset = default;
+                }
+
+                Presets = dict;
             }
             catch(Exception e)
             {
@@ -49,6 +67,9 @@ namespace COM3D2.CustomResolutionScreenShot.Plugin
             }
         }
 
-        public static ResolutionPreset Preset { get; set; } = new ResolutionPreset(3840,2160);
+        public static bool IsHighQualityTransparentMode { get; set; } = true;
+        public static ResolutionPreset CurrentPreset { get; set; } = new ResolutionPreset(3840, 2160, "Default");
+
+        public static Dictionary<string, ResolutionPreset> Presets { get; }
     }
 }
