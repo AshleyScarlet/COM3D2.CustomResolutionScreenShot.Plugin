@@ -20,7 +20,7 @@ ___
 ### ![](https://user-images.githubusercontent.com/70315656/116590856-30bfed00-a959-11eb-8eeb-5b1eb3ee78fd.png)
 設定ファイルで指定した解像度で撮影します  
 内部解像度を変更するのでキャプチャ倍率を使用するよりキレイな高解像度SSが撮れたりします
-| CRSS(3840x2160) | キャプチャ倍率(1920x1080 X2) |
+| CRSS  (3840x2160) | キャプチャ倍率  (1920x1080 X2) |
 |:---:|:---:|
 |<img src="https://user-images.githubusercontent.com/70315656/116593066-a927ad80-a95b-11eb-8d98-73834d959133.png">|<img src="https://user-images.githubusercontent.com/70315656/116593087-af1d8e80-a95b-11eb-942c-10e3747ed28b.png">|  
 
@@ -30,7 +30,7 @@ ___
 カスタム解像度 + 透過スクリーンショット  
 キャラクターだけを撮影します  
 <img src="https://user-images.githubusercontent.com/70315656/116593190-cbb9c680-a95b-11eb-81a3-b7fed1d3ff68.png" width="500">  
-こんなかんじ
+こんなかんじ 若干影が出てしまうかも。
 
 ## 設定ファイル
 `Sybaris\UnityInjector\Config\CustomResolutionScreenShot.xml` が設定ファイルです  
@@ -81,7 +81,7 @@ ___
 主に背景ぼかしやブルーム系のエフェクト  
 解像度を上げたりすると画面とSSとでかなり違いが出てしまいます
 
-| CRSS(3840x2160) | ふつうに撮ったやつ(画面そのまま) |
+| CRSS  (3840x2160) | ふつうに撮ったやつ  (画面そのまま) |
 |:---:|:---:|
 |<img src="https://user-images.githubusercontent.com/70315656/116599090-96fd3d80-a962-11eb-8bdf-76ec675f1893.png">|<img src="https://user-images.githubusercontent.com/70315656/116599114-9cf31e80-a962-11eb-9112-f5d4695dd68d.png">|
 | Bokehのみ、両方おなじ設定 |
@@ -89,6 +89,9 @@ ___
 
  ~~SceneCaptureを改造すれば何とかできます~~  
 `OnRenderImage(... , ...)` 内でRenderTextureのサイズを取得しているところをScreenのサイズを取得するようにすればいい感じになるはずです（憶測） 
+
+また、一部のエフェクトを適用していると透過撮影が出来なくなる可能性アリ。  
+~~不具合まみれ~~
 
 ### 大きい解像度を指定すると撮影時に数秒固まってしまう
 <sub>非同期にするべきなんですかね...?</sub>
