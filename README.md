@@ -19,7 +19,7 @@ COM3D2 ver1.55で使うことを想定していますが多分どのバージョ
 <img src="https://user-images.githubusercontent.com/70315656/116764003-77e1d700-aa5a-11eb-915c-a58b1f08895a.png" width="25" height="25">
 ___
 ### ![](https://user-images.githubusercontent.com/70315656/116590856-30bfed00-a959-11eb-8eeb-5b1eb3ee78fd.png)
-設定ファイルで指定した解像度で撮影します  
+プリセットで指定した解像度で撮影します  
 内部解像度を変更するのでキャプチャ倍率を使用するよりキレイな高解像度SSが撮れたりします
 | CRSS  (3840x2160) | キャプチャ倍率  (1920x1080 X2) |
 |:---:|:---:|
