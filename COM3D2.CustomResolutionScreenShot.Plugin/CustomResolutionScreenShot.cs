@@ -192,9 +192,6 @@ namespace COM3D2.CustomResolutionScreenShot.Plugin
 			buttonStyle.fontSize = Util.GetPixel(12);
 			buttonStyle.alignment = TextAnchor.MiddleCenter;
 
-			GUIStyle guistyle5 = new GUIStyle("textfield");
-			guistyle5.fontSize = Util.GetPixel(12);
-			guistyle5.alignment = TextAnchor.UpperLeft;
 			float num = labelStyle.fontSize;
 			float num2 = labelStyle.fontSize * 1.5f;
 			float num3 = labelStyle.fontSize * 0.5f;
