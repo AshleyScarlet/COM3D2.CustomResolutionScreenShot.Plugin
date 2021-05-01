@@ -13,9 +13,10 @@ COM3D2 ver1.55で使うことを想定していますが多分どのバージョ
 <sub><sub>実際は余計な機能を消したので同じではないです</sub></sub>
 
 ## 機能
-導入すると歯車メニューにアイコンが二つ追加されます
+導入すると歯車メニューにアイコンが３つ追加されます
 <img src="https://user-images.githubusercontent.com/70315656/116590856-30bfed00-a959-11eb-8eeb-5b1eb3ee78fd.png" width="25" height="25">
 <img src="https://user-images.githubusercontent.com/70315656/116591208-87c5c200-a959-11eb-864c-65a2e44d6354.png" width="25" height="25">
+<img src="https://user-images.githubusercontent.com/70315656/116764003-77e1d700-aa5a-11eb-915c-a58b1f08895a.png" width="25" height="25">
 ___
 ### ![](https://user-images.githubusercontent.com/70315656/116590856-30bfed00-a959-11eb-8eeb-5b1eb3ee78fd.png)
 設定ファイルで指定した解像度で撮影します  
@@ -29,8 +30,27 @@ ___
 ### ![](https://user-images.githubusercontent.com/70315656/116591208-87c5c200-a959-11eb-864c-65a2e44d6354.png)
 カスタム解像度 + 透過スクリーンショット  
 キャラクターだけを撮影します  
-<img src="https://user-images.githubusercontent.com/70315656/116593190-cbb9c680-a95b-11eb-81a3-b7fed1d3ff68.png" width="500">  
-こんなかんじ 若干影が出てしまうかも。
+| 通常 | 高品質ON |
+|:---:|:---:|
+|<img src="https://user-images.githubusercontent.com/70315656/116764042-9cd64a00-aa5a-11eb-89b8-6241bca9fcb9.png">|<img src="https://user-images.githubusercontent.com/70315656/116764034-9a73f000-aa5a-11eb-8718-e5e47a852133.png">|
+| 若干キャラの周りに影が出ます | きれいだけど撮影に時間がかかり気味 |  
+
+こんなかんじ
+___
+### ![](https://user-images.githubusercontent.com/70315656/116764003-77e1d700-aa5a-11eb-915c-a58b1f08895a.png)
+みすぼらしいGUIを開きます  
+![](https://user-images.githubusercontent.com/70315656/116764120-e32ba900-aa5a-11eb-9fe8-222d77cb97f7.png)  
+- プリセット
+  - 設定ファイル内のプリセットを選べます
+- 高品質モード
+  - 透過撮影で高品質モードを使うかどうか
+- プレビュー表示
+  - 画面左下にプレビュー画面を表示します 
+
+#### プレビュー
+![](https://user-images.githubusercontent.com/70315656/116764196-49183080-aa5b-11eb-88a6-6e84cf36e2ca.png)  
+↑この部分  
+縦向きやワイドなSSを撮影する際にひょっとしたら使えるかもしれません...  
 
 ## 設定ファイル
 `Sybaris\UnityInjector\Config\CustomResolutionScreenShot.xml` が設定ファイルです  
@@ -53,7 +73,7 @@ ___
 			<Height>2160</Height>
 		</Preset>
 
-		<!-- UWQHDのプリセット プレビュー機能がないので撮影するのはなかなか難しいかも...? -->
+		<!-- UWQHDのプリセット 横に少し長い -->
 		<Preset Name="UWQHD">
 			<Width>3440</Width>
 			<Height>1440</Height>
