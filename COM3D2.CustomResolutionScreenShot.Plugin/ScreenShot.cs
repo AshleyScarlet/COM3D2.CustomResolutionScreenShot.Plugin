@@ -108,7 +108,7 @@ namespace COM3D2.CustomResolutionScreenShot.Plugin
             instance.IsPreviewVisible = false;
 
             var preset = Configuration.CurrentPreset;
-            var renderTexture = RenderTexture.GetTemporary(preset.Width, preset.Height, preset.DepthBuffer, RenderTextureFormat.ARGB64);
+            var renderTexture = RenderTexture.GetTemporary(preset.Width, preset.Height, preset.DepthBuffer, RenderTextureFormat.ARGB32);
             var texture = new Texture2D(preset.Width, preset.Height, allowAlpha ? TextureFormat.ARGB32 : TextureFormat.RGB24, false);
             SetAntiAliasing(renderTexture);
 
