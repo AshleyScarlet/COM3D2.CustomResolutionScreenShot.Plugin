@@ -7,14 +7,11 @@
 		<COM3D2Path>$(registry:HKEY_CURRENT_USER\SOFTWARE\KISS\カスタムオーダーメイド3D2@InstallPath)</COM3D2Path>
 		<MCSPath>"C:\Program Files\Mono\bin\mcs"</MCSPath>
 		<IsSybarisPlugin>False</IsSybarisPlugin>
-		<PluginOutputPath>.\Output\</PluginOutputPath>
+		<LangVersion>Latest</LangVersion>
 		<GenerateTargetFrameworkAttribute>false</GenerateTargetFrameworkAttribute>
 	</PropertyGroup>
 
 	<ItemGroup>
-	  <Compile Remove="$(PluginOutputPath)**" />
-	  <EmbeddedResource Remove="$(PluginOutputPath)**" />
-	  <None Remove="$(PluginOutputPath)**" />
 	  <None Update="Sybaris\UnityInjector\Config\CustomResolutionScreenShot.xml">
 	    <CopyToOutputDirectory>Never</CopyToOutputDirectory>
 	  </None>

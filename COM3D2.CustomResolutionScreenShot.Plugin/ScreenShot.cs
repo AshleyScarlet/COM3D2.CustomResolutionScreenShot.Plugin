@@ -11,7 +11,7 @@ namespace COM3D2.CustomResolutionScreenShot.Plugin
             var camera = Camera.main;
             string path = Util.GetTimeFileName();
 
-            InternalScreenshot(camera, path);
+            InternalScreenshot(camera, path, false);
         }
 
         public unsafe static void TransparentScreenshot(this object _, GameObject obj)
@@ -101,15 +101,15 @@ namespace COM3D2.CustomResolutionScreenShot.Plugin
             }
         }
 
-        private static void InternalScreenshot(Camera camera, string path)
+        private static void InternalScreenshot(Camera camera, string path, bool allowAlpha = true)
         {
             var instance = CustomResolutionScreenShot.Instance;
             var tmpIsPreviewVisible = instance.IsPreviewVisible;
             instance.IsPreviewVisible = false;
 
             var preset = Configuration.CurrentPreset;
-            var renderTexture = RenderTexture.GetTemporary(preset.Width, preset.Height, preset.DepthBuffer, RenderTextureFormat.ARGB32);
-            var texture = new Texture2D(preset.Width, preset.Height, TextureFormat.ARGB32, false);
+            var renderTexture = RenderTexture.GetTemporary(preset.Width, preset.Height, preset.DepthBuffer, RenderTextureFormat.ARGB64);
+            var texture = new Texture2D(preset.Width, preset.Height, allowAlpha ? TextureFormat.ARGB32 : TextureFormat.RGB24, false);
             SetAntiAliasing(renderTexture);
 
             var fs = new FileStream(path, FileMode.Create, FileAccess.Write, FileShare.None);
@@ -134,38 +134,6 @@ namespace COM3D2.CustomResolutionScreenShot.Plugin
                 RenderTexture.ReleaseTemporary(renderTexture);
                 instance.IsPreviewVisible = tmpIsPreviewVisible;
                 GameObject.Destroy(texture);
-            }
-        }
-
-        private static Texture2D Render(Camera camera)
-        {
-            var instance = CustomResolutionScreenShot.Instance;
-            var tmpIsPreviewVisible = instance.IsPreviewVisible;
-            instance.IsPreviewVisible = false;
-
-            var preset = Configuration.CurrentPreset;
-            var renderTexture = RenderTexture.GetTemporary(preset.Width, preset.Height, preset.DepthBuffer);
-            var texture = new Texture2D(preset.Width, preset.Height, TextureFormat.ARGB32, false);
-            SetAntiAliasing(renderTexture);
-
-            var tmpTargetTexture = camera.targetTexture;
-            var tmpActiveTexture = RenderTexture.active;
-
-            try
-            {
-                camera.targetTexture = renderTexture;
-                RenderTexture.active = renderTexture;
-                camera.Render();
-                texture.ReadPixels(new Rect(0, 0, renderTexture.width, renderTexture.height), 0, 0);
-                texture.Apply();
-                return texture;
-            }
-            finally
-            {
-                camera.targetTexture = tmpTargetTexture;
-                RenderTexture.active = tmpActiveTexture;
-                RenderTexture.ReleaseTemporary(renderTexture);
-                instance.IsPreviewVisible = tmpIsPreviewVisible;
             }
         }
 
