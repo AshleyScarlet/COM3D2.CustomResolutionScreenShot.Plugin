@@ -3,7 +3,7 @@
 ~~解像度は、力だ~~
   
 ## ダウンロード
-[こちら](https://github.com/AshleyScarlet/COM3D2.CustomResolutionScreenShot.Plugin/releases/download/Latest/COM3D2.CustomResolutionScreenShot.Plugin.zip)からどうぞ  
+[こちら](https://github.com/AshleyScarlet/COM3D2.CustomResolutionScreenShot.Plugin/releases/latest/download/COM3D2.CustomResolutionScreenShot.Plugin.zip)からどうぞ  
 COM3D2 ver1.55で使うことを想定していますが多分どのバージョンでも動きそうな気がします
 
 
