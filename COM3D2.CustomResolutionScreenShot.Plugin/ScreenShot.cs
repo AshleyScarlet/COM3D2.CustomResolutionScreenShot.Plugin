@@ -56,9 +56,8 @@ namespace COM3D2.CustomResolutionScreenShot.Plugin
             instance.IsPreviewVisible = false;
 
             var preset = Configuration.CurrentPreset;
-            var renderTexture = RenderTexture.GetTemporary(preset.Width, preset.Height, preset.DepthBuffer);
+            var renderTexture = RenderTexture.GetTemporary(preset.Width, preset.Height, preset.DepthBuffer).WithAntiAliasing();
             var texture = new Texture2D(preset.Width, preset.Height, TextureFormat.ARGB32, false);
-            SetAntiAliasing(renderTexture);
 
             var fs = new FileStream(path, FileMode.Create, FileAccess.Write, FileShare.None);
             var tmpTargetTexture = camera.targetTexture;
@@ -108,9 +107,8 @@ namespace COM3D2.CustomResolutionScreenShot.Plugin
             instance.IsPreviewVisible = false;
 
             var preset = Configuration.CurrentPreset;
-            var renderTexture = RenderTexture.GetTemporary(preset.Width, preset.Height, preset.DepthBuffer, RenderTextureFormat.ARGB32);
+            var renderTexture = RenderTexture.GetTemporary(preset.Width, preset.Height, preset.DepthBuffer, RenderTextureFormat.ARGB32).WithAntiAliasing();
             var texture = new Texture2D(preset.Width, preset.Height, allowAlpha ? TextureFormat.ARGB32 : TextureFormat.RGB24, false);
-            SetAntiAliasing(renderTexture);
 
             var fs = new FileStream(path, FileMode.Create, FileAccess.Write, FileShare.None);
             var tmpTargetTexture = camera.targetTexture;
@@ -135,19 +133,6 @@ namespace COM3D2.CustomResolutionScreenShot.Plugin
                 instance.IsPreviewVisible = tmpIsPreviewVisible;
                 GameObject.Destroy(texture);
             }
-        }
-
-        private static void SetAntiAliasing(RenderTexture renderTexture)
-        {
-            var value = GameMain.Instance.CMSystem.Antialias;
-            if (value == CMSystem.AntiAliasType.None)
-            renderTexture.antiAliasing = 0;
-            else if (value == CMSystem.AntiAliasType.X2)
-                renderTexture.antiAliasing = 2;
-            else if (value == CMSystem.AntiAliasType.X4)
-                renderTexture.antiAliasing = 4;
-            else
-                renderTexture.antiAliasing = 8;
         }
     }
 }

@@ -1,5 +1,8 @@
 ﻿using System;
 
+#pragma warning disable 0660
+#pragma warning disable 0661
+
 namespace COM3D2.CustomResolutionScreenShot.Plugin
 {
     internal struct ResolutionPreset
@@ -23,7 +26,8 @@ namespace COM3D2.CustomResolutionScreenShot.Plugin
         {
             int widthCharCount = Util.CountDigits((uint)Width);
             int heightCharCount = Util.CountDigits((uint)Height);
-            var buffer = stackalloc char[widthCharCount + 3 + heightCharCount + 1];
+            var bufferLength = widthCharCount + 3 + heightCharCount;
+            var buffer = stackalloc char[bufferLength];
             var ptr = buffer;
             WriteInt32(ptr, widthCharCount, Width);
             ptr += widthCharCount;
@@ -31,7 +35,39 @@ namespace COM3D2.CustomResolutionScreenShot.Plugin
             *ptr++ = 'x';
             *ptr++ = ' ';
             WriteInt32(ptr, heightCharCount, Height);
-            return new string(buffer);
+            return new string(buffer, 0, bufferLength);
+        }
+
+        public unsafe string GetAspectRatioText()
+        {
+            var width = Width;
+            var height = Height;
+            var gcd = Gcd(width, height);
+            width /= gcd;
+            height /= gcd;
+
+            int widthCharCount = Util.CountDigits((uint)width);
+            int heightCharCount = Util.CountDigits((uint)height);
+            var bufferLength = widthCharCount + 1 + heightCharCount;
+            var buffer = stackalloc char[bufferLength];
+            var ptr = buffer;
+            WriteInt32(ptr, widthCharCount, width);
+            ptr += widthCharCount;
+            *ptr++ = ':';
+            WriteInt32(ptr, heightCharCount, height);
+            return new string(buffer, 0, bufferLength);
+        }
+
+        private static int Gcd(int left, int right)
+        {
+            while (right != 0)
+            {
+                int temp = left % right;
+                left = right;
+                right = temp;
+            }
+
+            return left;
         }
 
         private unsafe static void WriteInt32(char* buffer, int length, int value)
@@ -45,5 +81,11 @@ namespace COM3D2.CustomResolutionScreenShot.Plugin
             }
             while (value != 0);
         }
+
+        public static bool operator ==(ResolutionPreset left, ResolutionPreset right) => 
+            left.Width == right.Width && left.Height == right.Height &&
+            left.DepthBuffer == right.DepthBuffer && left.Name == right.Name;
+
+        public static bool operator !=(ResolutionPreset left, ResolutionPreset right) => !(left == right);
     }
 }

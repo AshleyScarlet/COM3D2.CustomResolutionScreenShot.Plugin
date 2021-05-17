@@ -9,7 +9,7 @@ using UnityInjector.Attributes;
 namespace COM3D2.CustomResolutionScreenShot.Plugin
 {
     [PluginName("CustomResolutionScreenShot")]
-    [PluginVersion("1.1.0")]
+    [PluginVersion("1.2.2")]
     public class CustomResolutionScreenShot : PluginBase
     {
 		public CustomResolutionScreenShot()
@@ -27,44 +27,139 @@ namespace COM3D2.CustomResolutionScreenShot.Plugin
 			_PresetNames = array;
 			_SelectedPresetName = Configuration.CurrentPreset.Name;
 			_CurrentPresetResolutionText = Configuration.CurrentPreset.GetResolutionText();
+			_CurrentPresetAspectRatioText = Configuration.CurrentPreset.GetAspectRatioText();
 		}
 
-		private void Start()
-		{
+		private void Awake()
+        {
 			_ComboBox = new CustomComboBox(WindowID + 1);
 
+			//ギアメニューが崩れるのはAwakeではなくStartで追加していたのが問題だった様子
 			GearMenu.Buttons.Add("CustomResolutionScreenShot", "カスタム解像度撮影", Icon.Normal, default(object).Screenshot);
-            GearMenu.Buttons.Add("CustomResolutionTransparentScreenShot", "透過カスタム解像度撮影", Icon.Transparent, default(object).TransparentScreenshot);
+			GearMenu.Buttons.Add("CustomResolutionTransparentScreenShot", "透過カスタム解像度撮影", Icon.Transparent, default(object).TransparentScreenshot);
 			GearMenu.Buttons.Add("CustomResolutionScreenShotSetting", "カスタム解像度撮影設定", Icon.Setting, _ => IsWindowVisible = !IsWindowVisible);
-
 			SceneManager.sceneLoaded += OnSceneLoaded;
-			
-        }
+		}
 
         private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
         {
 			IsPreviewVisible = false;
-        }
-
-        private void Update()
-        {
             if (ReferenceEquals(GameObject.Find("CRSS-PreviewRenderer"), null))
             {
                 var canvasObject = new GameObject("CRSS-Canvas");
+				canvasObject.layer = 5;
                 var canvas = canvasObject.AddComponent<Canvas>();
                 canvas.renderMode = RenderMode.ScreenSpaceOverlay;
                 _ = canvasObject.AddComponent<CanvasScaler>();
 
                 var previewRenderer = new GameObject("CRSS-PreviewRenderer");
+				previewRenderer.layer = 5;
                 previewRenderer.transform.parent = canvasObject.transform;
 				var rawImage = previewRenderer.AddComponent<RawImage>();
 				rawImage.color = new Color(0, 0, 0, 0);
 
 				var preset = Configuration.CurrentPreset;
 				ResizePreviewImage(preset);
+
+				var previewCamera = new GameObject("CRSS-PreviewCamera");
+				var camera = previewCamera.AddComponent<Camera>();
+				camera.depth = short.MinValue;
+				camera.enabled = false;
+
+				StartCoroutine(SynchronizeCamera(camera));
 			}
         }
 
+		private IEnumerator SynchronizeCamera(Camera previewCamera)
+		{
+			var waitForSeconds = new WaitForSeconds(0.25f);
+			var prevPreset = Configuration.CurrentPreset;
+
+			while (true)
+			{
+				if (IsPreviewVisible)
+				{
+					if (previewCamera != null)
+					{
+						var mainCamera = Camera.main;
+						var mainCameraTransform = mainCamera.transform;
+						var previewCameraTransform = previewCamera.transform;
+
+						previewCameraTransform.position = mainCameraTransform.position;
+						previewCameraTransform.rotation = mainCameraTransform.rotation;
+						previewCamera.nearClipPlane = mainCamera.nearClipPlane;
+						previewCamera.farClipPlane = mainCamera.farClipPlane;
+						previewCamera.fieldOfView = mainCamera.fieldOfView;
+
+						if (!previewCamera.enabled)
+						{
+							UpdatePreviewImage();
+							previewCamera.enabled = true;
+						}
+						if (prevPreset != Configuration.CurrentPreset)
+						{
+							ResetPreviewImage();
+							UpdatePreviewImage();
+							prevPreset = Configuration.CurrentPreset;
+						}
+					}
+
+					yield return null;
+				}
+				else
+				{
+					if (previewCamera != null && previewCamera.enabled)
+					{
+						previewCamera.enabled = false;
+						ResetPreviewImage();
+					}
+
+					yield return waitForSeconds;
+				}
+
+            }
+		}
+
+		private void UpdatePreviewImage()
+		{
+			var renderer = GameObject.Find("CRSS-PreviewRenderer");
+			var cameraObj = GameObject.Find("CRSS-PreviewCamera");
+			if (ReferenceEquals(renderer, null) || ReferenceEquals(cameraObj, null))
+				return;
+			var rawImage = renderer.GetComponent<RawImage>();
+			var camera = cameraObj.GetComponent<Camera>();
+			var size = rawImage.rectTransform.sizeDelta;
+			var preset = Configuration.CurrentPreset;
+
+			var width = size.x;
+			var height = size.y;
+
+			var renderTexrure = RenderTexture.GetTemporary((int)width, (int)height, preset.DepthBuffer).WithAntiAliasing();
+
+			camera.targetTexture = renderTexrure;
+			camera.Render();
+			rawImage.texture = renderTexrure;
+		}
+
+		private void ResetPreviewImage()
+		{
+			var renderer = GameObject.Find("CRSS-PreviewRenderer");
+			var cameraObj = GameObject.Find("CRSS-PreviewCamera");
+			if (ReferenceEquals(renderer, null) || ReferenceEquals(cameraObj, null))
+				return;
+			var rawImage = renderer.GetComponent<RawImage>();
+			var camera = cameraObj.GetComponent<Camera>();
+
+			var renderTexrure = camera.targetTexture;
+			if (ReferenceEquals(renderTexrure, null))
+				return;
+
+			camera.targetTexture = null;
+			rawImage.texture = null;
+
+			RenderTexture.ReleaseTemporary(renderTexrure);
+		}
+		
 		private void ResizePreviewImage(ResolutionPreset preset)
 		{
 			var rawImage = GameObject.Find("CRSS-PreviewRenderer").GetComponent<RawImage>();
@@ -149,31 +244,6 @@ namespace COM3D2.CustomResolutionScreenShot.Plugin
 				}
 			}
 
-			if (IsPreviewVisible)
-			{
-				var rawImage = GameObject.Find("CRSS-PreviewRenderer").GetComponent<RawImage>();
-				var size = rawImage.rectTransform.sizeDelta;
-				var camera = Camera.main;
-				var preset = Configuration.CurrentPreset;
-
-				var width = size.x;
-				var height = size.y;
-
-				var renderTexrure = RenderTexture.GetTemporary((int)width, (int)height, preset.DepthBuffer);
-
-				var tmpTargetTexture = camera.targetTexture;
-				var tmpActiveTexture = RenderTexture.active;
-				camera.targetTexture = renderTexrure;
-				RenderTexture.active = renderTexrure;
-
-				camera.Render();
-				rawImage.texture = renderTexrure;
-
-				camera.targetTexture = tmpTargetTexture;
-				RenderTexture.active = tmpActiveTexture;
-				RenderTexture.ReleaseTemporary(renderTexrure);
-			}
-
 		}
 		private void OnGUIWindow(int windowID)
 		{
@@ -217,14 +287,18 @@ namespace COM3D2.CustomResolutionScreenShot.Plugin
 						var preset = Configuration.Presets[_SelectedPresetName];
 						Configuration.CurrentPreset = preset;
 						_CurrentPresetResolutionText = preset.GetResolutionText();
+						_CurrentPresetAspectRatioText = preset.GetAspectRatioText();
 
 						ResizePreviewImage(preset);
 					}
 				});
 			}
 
-			position.Set(position.x, position.y + num3 * 2.5f, position.width, position.height);
+			position.Set(position.x, position.y + num3 * 2.5f, _CurrentPresetResolutionText.Length * num * 0.6f, position.height);
 			GUI.Label(position, _CurrentPresetResolutionText, labelStyle);
+
+			position.Set(position.x + position.width, position.y, position.width, position.height);
+			GUI.Label(position, _CurrentPresetAspectRatioText, labelStyle);
 
 			position.Set(rect.x, position.y + num3 * 3, Util.GetPixel(8) * 14, Util.GetPixel(8) * 2);
 			Configuration.IsHighQualityTransparentMode = GUI.Toggle(position, Configuration.IsHighQualityTransparentMode, "高品質モード", toggleButtonStyle);
@@ -273,6 +347,7 @@ namespace COM3D2.CustomResolutionScreenShot.Plugin
 
 		private string _SelectedPresetName;
 		private string _CurrentPresetResolutionText;
+		private string _CurrentPresetAspectRatioText;
 		private readonly string[] _PresetNames;
 
 		private CustomComboBox _ComboBox;

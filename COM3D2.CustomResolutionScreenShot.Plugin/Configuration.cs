@@ -12,12 +12,22 @@ namespace COM3D2.CustomResolutionScreenShot.Plugin
 
         static Configuration()
         {
+            XDocument xml = null;
             if (!File.Exists(ConfigFilePath))
-                return;
+            {
+                var defaultPreset = new XElement("Preset", new XAttribute("Name", "Default"), new XElement("Width", 3840), new XElement("Height", 2160));
+                var presets = new XElement("Presets", new XAttribute("Target", "Default"), defaultPreset);
+                var config = new XElement("Config", presets);
+                xml = new XDocument(config);
+                xml.Save(ConfigFilePath);
+            }
+            else
+            {
+                xml = XDocument.Load(ConfigFilePath);
+            }
 
             try
             {
-                XDocument xml = XDocument.Load(ConfigFilePath);
                 var configElement = xml.Element("Config");
                 var presetElement = configElement.Element("Presets");
                 var selectedPresetName = presetElement.Attribute("Target").Value;

@@ -79,5 +79,20 @@ namespace COM3D2.CustomResolutionScreenShot.Plugin
             return digits;
         }
 
+
+        public static RenderTexture WithAntiAliasing(this RenderTexture renderTexture)
+        {
+            var value = GameMain.Instance.CMSystem.Antialias;
+            if (value == CMSystem.AntiAliasType.None)
+                renderTexture.antiAliasing = 0;
+            else if (value == CMSystem.AntiAliasType.X2)
+                renderTexture.antiAliasing = 2;
+            else if (value == CMSystem.AntiAliasType.X4)
+                renderTexture.antiAliasing = 4;
+            else
+                renderTexture.antiAliasing = 8;
+            return renderTexture;
+        }
+
     }
 }
